@@ -1,0 +1,123 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Affordability Tracker | GESDA</title>
+<style>
+:root{color-scheme:light;--navy:#102957;--muted:#52627c;--gold:#e7b247;--edge:#dbe3ee}*{box-sizing:border-box}body{margin:0;background:#eef2f8;color:var(--navy);font:15px/1.5 system-ui,sans-serif}header{background:#102957;color:white;border-bottom:4px solid var(--gold)}header div,main{max-width:1210px;margin:auto;padding:18px 24px}.brand{font-weight:800;letter-spacing:.15em}.brand span{color:#bed1ee;font-weight:400;letter-spacing:0;margin-left:12px}h1{font-size:clamp(30px,5vw,54px);letter-spacing:-.045em;margin:0;line-height:1.1}.intro{margin:10px 0 22px;color:var(--muted)}main{padding-top:28px}.eyebrow{color:#536887;letter-spacing:.14em;font-size:11px;font-weight:800;margin:0 0 8px}.card{background:white;border:1px solid var(--edge);border-radius:16px;box-shadow:0 8px 26px #132b5010;overflow:hidden}.bar,.layers,.charthead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:13px 17px}.bar{border-bottom:1px solid var(--edge);background:#f8faff}.charthead{justify-content:space-between;padding-bottom:0}button{font:inherit;border:1px solid #cbd6e7;border-radius:8px;padding:7px 11px;background:white;color:var(--navy);cursor:pointer}button:disabled{opacity:.45;cursor:default}button.primary{background:var(--navy);color:white;border-color:var(--navy);font-weight:700}button:focus-visible,input:focus-visible,svg:focus-visible{outline:3px solid #a46c00;outline-offset:2px}.layers{border-top:1px solid var(--edge);font-size:13px;gap:16px}.layers label{display:flex;align-items:center;gap:5px}.stage{margin-left:auto;color:var(--muted);font-size:13px}.date{color:var(--muted);font-size:13px}.value{font-variant-numeric:tabular-nums;font-weight:750}#wrap{padding:0 12px}svg{display:block;width:100%;height:auto;touch-action:pan-y}footer{padding:15px 4px;color:var(--muted);font-size:12px}footer p{margin:4px 0}.hint{color:var(--muted);font-size:12px}@media(max-width:600px){header div,main{padding-left:13px;padding-right:13px}.bar,.layers,.charthead{padding-left:10px;padding-right:10px}.stage{width:100%;margin:0}#wrap{padding:0 4px}}
+</style>
+<header><div class="brand">GESDA <span>Getting Started in Data Analysis</span></div></header>
+<main><p class="eyebrow">VISUAL BLOG · U.S. ECONOMY</p><h1>Affordability Tracker</h1><p class="intro">Follow the monthly affordability measure from Mar 2007 to Sep 2026.</p>
+<section class="card" aria-label="Interactive affordability chart">
+<div class="bar"><button class="primary" id="play">▶ Play story</button><button id="pause" disabled>Pause</button><button id="in">Zoom in</button><button id="out" disabled>Zoom out</button><button id="reset">Reset zoom</button><span class="stage" id="stage" aria-live="polite">Explore the full chart</span></div>
+<div class="charthead"><div><strong>Monthly affordability</strong> <span class="date">· percentage points</span></div><div><span class="date" id="date"></span> <span class="value" id="value"></span></div></div>
+<div id="wrap"><svg id="chart" tabindex="0" role="group" aria-label="Affordability chart. Use the left and right arrow keys to inspect months."></svg></div>
+<div class="layers"><strong>Show</strong><label><input type="checkbox" id="terms" checked> Presidential terms</label><label><input type="checkbox" id="events" checked> Recession and COVID-19</label><label><input type="checkbox" id="arrows" checked> Good / Bad arrows</label></div>
+</section>
+<footer><p>Affordability is the residual from regressing annual growth in real average hourly earnings on annual growth in the unemployment rate.</p><p>Source: GESDA calculations using FRED / BLS data.</p></footer>
+</main>
+<script>
+const values = [0.267058651, 0.099482192, 0.428820078, 0.409055958, 0.381187512, 0.99516769, -0.309552762, -1.12873425, -1.848804764, -2.092851111, -2.043411819, -1.963476851, -1.766938842, -1.810751365, -2.122665482, -3.183407455, -3.340858544, -3.241552326, -2.884941332, -1.912855835, 0.684789901, 2.027914649, 1.752550733, 0.96809384, 1.299639224, 1.318585091, 1.596781975, 1.793269957, 2.526854571, 1.949035835, 1.791946244, 0.816888987, -1.441548895, -2.323785662, -1.779638608, -0.941440029, -1.274703203, -1.187405492, -0.777671457, 0.176923621, 0.045080674, 0.141105899, 0.268722281, 0.385493181, 0.197022798, -0.019199072, 0.099576363, -0.556808659, -1.012031248, -1.439461144, -1.683470925, -1.766372919, -1.603118311, -2.086365632, -2.145039325, -1.801784201, -1.533252623, -1.261786133, -1.512026235, -1.348336481, -0.673225277, -0.390952708, -0.069416412, 0.123597381, -0.020353257, -0.080772672, -0.083785163, -0.682483237, -0.101786385, 0.093520848, -0.013363116, -0.161818785, 0.105845991, 0.61657093, 0.397455331, 0.154974319, 0.009271068, 0.565611654, 0.697175702, 1.084497953, 0.79435015, 0.346544368, 0.445956147, 1.046044676, 0.325851438, -0.031372583, -0.083122502, 0.04775437, 0.031850603, 0.371004461, 0.391517227, 0.537716354, 0.774607252, 1.159744948, 2.266822116, 1.979456209, 2.284235719, 2.23074492, 2.116351189, 1.772368339, 1.886828211, 1.994772748, 2.158560793, 2.19782715, 1.789754614, 1.671999546, 1.235644557, 1.33049758, 1.225360138, 1.048335632, 1.251887584, 1.227294005, 1.55827136, 0.982267409, 0.578916253, 0.64343896, 0.602915986, 0.307243562, -0.454537891, -0.407987173, -0.011333945, 0.24876252, 0.336456357, 0.690433252, 0.627014385, 0.418477323, 0.494554363, 0.191975522, 0.095536666, 0.418649754, 0.523331908, 0.109341535, 0.253233493, 0.071220731, 0.036096385, -0.174439895, -0.177504948, 0.412972408, 0.675948893, 0.544945629, 0.990824203, 1.108206561, 1.258070837, 1.716943126, 1.165563933, 0.963127458, 1.170676683, 1.562801465, 1.163380499, 1.309472491, 1.028941011, 1.078015662, 0.821204483, 0.364585903, 0.219613817, 0.440848645, 1.022554637, -0.839659307, -1.308316177, -1.750553175, -1.419026109, -0.618891905, -0.451103708, 0.368223858, 0.558240595, 1.204124775, 1.261260416, 0.99057723, 0.279375035, -2.288047652, -1.442956242, -0.509975841, -0.089490367, -0.161362481, 0.239504485, -0.314222333, -0.873114271, -1.43119052, -1.310147903, -1.932533087, -1.886882031, -1.70604158, -2.204758806, -2.711915025, -2.283095844, -2.303370501, -2.621907482, -2.494684556, -2.051067376, -1.58543175, -1.870710534, -1.395075507, -0.619449277, -0.599145088, -0.263994542, 1.057463326, 0.85301318, 0.160926376, 0.068970794, 0.228601844, 0.39068558, 0.041092491, 0.624935395, 0.23599077, -0.154752028, -0.284585552, 0.166732208, 0.060406652, -0.352940747, 0.433926988, 0.67215639, 0.810370589, 0.576768438, 0.480363954, 0.251216729, 0.583752305, 1.096502572, 0.858618898, 0.807555521, 0.660491866, 0.638386944, 0.458029121, 0.119214074, 0.316395335, 0.5260779, 0.363171937, 0.547149403, 0.623305115, -0.405520791, -0.749055893, -1.282593354, -0.628368462, -0.451280841, -0.590781361, -1.029362333];
+const labels = ["Mar 2007", "Apr 2007", "May 2007", "Jun 2007", "Jul 2007", "Aug 2007", "Sep 2007", "Oct 2007", "Nov 2007", "Dec 2007", "Jan 2008", "Feb 2008", "Mar 2008", "Apr 2008", "May 2008", "Jun 2008", "Jul 2008", "Aug 2008", "Sep 2008", "Oct 2008", "Nov 2008", "Dec 2008", "Jan 2009", "Feb 2009", "Mar 2009", "Apr 2009", "May 2009", "Jun 2009", "Jul 2009", "Aug 2009", "Sep 2009", "Oct 2009", "Nov 2009", "Dec 2009", "Jan 2010", "Feb 2010", "Mar 2010", "Apr 2010", "May 2010", "Jun 2010", "Jul 2010", "Aug 2010", "Sep 2010", "Oct 2010", "Nov 2010", "Dec 2010", "Jan 2011", "Feb 2011", "Mar 2011", "Apr 2011", "May 2011", "Jun 2011", "Jul 2011", "Aug 2011", "Sep 2011", "Oct 2011", "Nov 2011", "Dec 2011", "Jan 2012", "Feb 2012", "Mar 2012", "Apr 2012", "May 2012", "Jun 2012", "Jul 2012", "Aug 2012", "Sep 2012", "Oct 2012", "Nov 2012", "Dec 2012", "Jan 2013", "Feb 2013", "Mar 2013", "Apr 2013", "May 2013", "Jun 2013", "Jul 2013", "Aug 2013", "Sep 2013", "Oct 2013", "Nov 2013", "Dec 2013", "Jan 2014", "Feb 2014", "Mar 2014", "Apr 2014", "May 2014", "Jun 2014", "Jul 2014", "Aug 2014", "Sep 2014", "Oct 2014", "Nov 2014", "Dec 2014", "Jan 2015", "Feb 2015", "Mar 2015", "Apr 2015", "May 2015", "Jun 2015", "Jul 2015", "Aug 2015", "Sep 2015", "Oct 2015", "Nov 2015", "Dec 2015", "Jan 2016", "Feb 2016", "Mar 2016", "Apr 2016", "May 2016", "Jun 2016", "Jul 2016", "Aug 2016", "Sep 2016", "Oct 2016", "Nov 2016", "Dec 2016", "Jan 2017", "Feb 2017", "Mar 2017", "Apr 2017", "May 2017", "Jun 2017", "Jul 2017", "Aug 2017", "Sep 2017", "Oct 2017", "Nov 2017", "Dec 2017", "Jan 2018", "Feb 2018", "Mar 2018", "Apr 2018", "May 2018", "Jun 2018", "Jul 2018", "Aug 2018", "Sep 2018", "Oct 2018", "Nov 2018", "Dec 2018", "Jan 2019", "Feb 2019", "Mar 2019", "Apr 2019", "May 2019", "Jun 2019", "Jul 2019", "Aug 2019", "Sep 2019", "Oct 2019", "Nov 2019", "Dec 2019", "Jan 2020", "Feb 2020", "Mar 2020", "Apr 2020", "May 2020", "Jun 2020", "Jul 2020", "Aug 2020", "Sep 2020", "Oct 2020", "Nov 2020", "Dec 2020", "Jan 2021", "Feb 2021", "Mar 2021", "Apr 2021", "May 2021", "Jun 2021", "Jul 2021", "Aug 2021", "Sep 2021", "Oct 2021", "Nov 2021", "Dec 2021", "Jan 2022", "Feb 2022", "Mar 2022", "Apr 2022", "May 2022", "Jun 2022", "Jul 2022", "Aug 2022", "Sep 2022", "Oct 2022", "Nov 2022", "Dec 2022", "Jan 2023", "Feb 2023", "Mar 2023", "Apr 2023", "May 2023", "Jun 2023", "Jul 2023", "Aug 2023", "Sep 2023", "Oct 2023", "Nov 2023", "Dec 2023", "Jan 2024", "Feb 2024", "Mar 2024", "Apr 2024", "May 2024", "Jun 2024", "Jul 2024", "Aug 2024", "Sep 2024", "Oct 2024", "Nov 2024", "Dec 2024", "Jan 2025", "Feb 2025", "Mar 2025", "Apr 2025", "May 2025", "Jun 2025", "Jul 2025", "Aug 2025", "Sep 2025", "Oct 2025", "Nov 2025", "Dec 2025", "Jan 2026", "Feb 2026", "Mar 2026", "Apr 2026", "May 2026", "Jun 2026", "Jul 2026", "Aug 2026", "Sep 2026"];
+const periods=[[0, 22, "G.W. Bush (R)", "#f5c4c7"], [22, 118, "Obama (D)", "#cfdef8"], [118, 166, "Trump (R)", "#f5c4c7"], [166, 214, "Biden (D)", "#cfdef8"], [214, 234, "Trump (R)", "#f5c4c7"]];
+const events=[[9, 27, "Recession"], [156, 194, "COVID-19"]];
+const get=id=>document.getElementById(id);
+const svg=get('chart'), toggles=['terms','events','arrows'].map(get);
+const last=values.length-1;
+const [yMin,yMax,yStep]=[-4, 3, 1];
+let lo=0,hi=last,active=last,visible=last,playing=false,paused=false,elapsed=0,previous=null,frame=0,plot={};
+const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+const signed=y=>(y>0?'+':'')+y.toFixed(2);
+function readout(){
+ const i=Math.min(active,visible);
+ get('date').textContent=labels[i];
+ get('value').textContent=signed(values[i])+' pp';
+}
+function draw(){
+ const w=Math.max(290,svg.clientWidth||900), mobile=w<650,h=mobile?355:465;
+ const left=mobile?63:96,right=w-18,top=45,bottom=h-60;
+ plot={left,right,w};
+ const x=i=>left+(i-lo)*(right-left)/(hi-lo);
+ const y=v=>top+(yMax-v)*(bottom-top)/(yMax-yMin);
+ const t=(a,b,s,opts='')=>'<text x="'+a+'" y="'+b+'" '+opts+'>'+s+'</text>';
+ const line=(a,b,c,d,opts='')=>'<line x1="'+a+'" y1="'+b+'" x2="'+c+'" y2="'+d+'" '+opts+'/>';
+ const band=(a,b,color)=>'<rect x="'+x(a)+'" y="'+top+'" width="'+(x(b)-x(a))+'" height="'+(bottom-top)+'" fill="'+color+'"/>';
+ let g='<defs><clipPath id="plot"><rect x="'+left+'" y="'+top+'" width="'+(right-left)+'" height="'+(bottom-top)+'"/></clipPath></defs>';
+ g+='<g clip-path="url(#plot)">';
+ if(toggles[0].checked) for(const [a,b,n,c] of periods) g+=band(a,b,c);
+ if(toggles[1].checked) for(const [a,b] of events) g+=band(a,b,'#8963a64a');
+ for(let v=yMin;v<=yMax;v+=yStep) g+=line(left,y(v),right,y(v),v===0?'stroke="#354a69" stroke-dasharray="5 4"':'stroke="#647899" stroke-opacity=".19"');
+ const step=mobile?(hi-lo>110?48:hi-lo>40?12:6):(hi-lo>150?(w>950?6:12):hi-lo>50?6:3);
+ const ticks=[lo,...Array.from({length:Math.floor(hi/step)+1},(_,i)=>i*step).filter(i=>i-lo>=step*.6&&hi-i>=step*.6),hi];
+ for(const i of ticks) g+=line(x(i),top,x(i),bottom,'stroke="#647899" stroke-opacity=".14"');
+ const end=Math.min(hi,visible);
+ if(end>=lo){
+ const points=values.slice(lo,end+1).map((v,i)=>x(lo+i)+','+y(v)).join(' ');
+ g+='<polyline points="'+points+'" fill="none" stroke="#102957" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/>';
+ const i=Math.max(lo,Math.min(end,active));
+ g+=line(x(i),top,x(i),bottom,'stroke="#476591" stroke-dasharray="3 4"');
+ g+='<circle cx="'+x(i)+'" cy="'+y(values[i])+'" r="4.5" fill="#e7b247" stroke="#102957" stroke-width="1.5"/>';
+ }
+ g+='</g><g fill="#50627e" font-family="system-ui" font-size="11">';
+ for(let v=yMin;v<=yMax;v+=yStep) g+=t(left-9,y(v)+4,v,'text-anchor="end"');
+ for(const i of ticks) g+=t(x(i),bottom+14,labels[i],'text-anchor="end" transform="rotate(-48 '+x(i)+' '+(bottom+14)+')" font-size="'+(step===6&&!mobile?9:10)+'"');
+ if(toggles[0].checked) for(const [a,b,n] of periods){
+ const A=Math.max(a,lo),B=Math.min(b,hi);
+ if(x(B)-x(A)>43) g+=t((x(A)+x(B))/2,bottom-9,n,'text-anchor="middle" fill="#203a64" font-weight="700" font-size="'+(mobile?9:11)+'"');
+ }
+ if(toggles[1].checked) for(const [a,b,n] of events){
+ const A=Math.max(a,lo),B=Math.min(b,hi);
+ if(B>A) g+=t((x(A)+x(B))/2,top-9,n,'text-anchor="middle" fill="#603d7b" font-weight="700" font-size="'+(mobile?9:11)+'"');
+ }
+ if(toggles[2].checked) for(const [v,n,c] of [[yMax,'Good','#167449'],[yMin,'Bad','#a52b3a']]){
+ const xx=left-(mobile?37:55), yy=y(v)+(v>0?5:-5), base=yy+(v>0?7:-7);
+ g+=line(xx,y(0),xx,base,'stroke="'+c+'" stroke-width="2.5"');
+ g+='<polygon points="'+xx+','+yy+' '+(xx-4)+','+base+' '+(xx+4)+','+base+'" fill="'+c+'"/>';
+ g+=t(xx,y(v/2),n,'fill="'+c+'" text-anchor="middle" font-weight="700" paint-order="stroke" stroke="white" stroke-width="5"');
+ }
+ svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.innerHTML=g+'</g>';
+ get('out').disabled=hi-lo===last||playing;
+ get('in').disabled=hi-lo<=12||playing;
+ readout();
+}
+function status(s){if(get('stage').textContent!==s)get('stage').textContent=s;}
+function finish(message='Explore the full chart'){
+ cancelAnimationFrame(frame);playing=false;paused=false;visible=last;
+ get('pause').disabled=true;get('pause').textContent='Pause';get('play').textContent='↻ Replay story';status(message);draw();
+}
+function step(now){
+ if(!playing||paused)return;
+ if(previous!==null)elapsed+=now-previous;
+ previous=now;
+ const ms=elapsed*(reduced.matches?3:1);
+ visible=reduced.matches?last:Math.min(last,Math.floor(ms/7000*last));
+ active=visible;
+ [7800,10100,12400].forEach((at,i)=>toggles[i].checked=ms>=at);
+ status(ms<7800?'1 of 4 · Monthly line':ms<10100?'2 of 4 · Presidential terms':ms<12400?'3 of 4 · Recession and COVID-19':'4 of 4 · Good / Bad');
+ if(ms>=14300){finish('Story complete · Explore the chart');return;}
+ draw();frame=requestAnimationFrame(step);
+}
+get('play').onclick=()=>{
+ cancelAnimationFrame(frame);lo=0;hi=last;active=0;elapsed=0;previous=null;playing=true;paused=false;
+ get('pause').disabled=false;get('pause').textContent='Pause';get('play').textContent='↻ Replay story';frame=requestAnimationFrame(step);
+};
+get('pause').onclick=()=>{
+ paused=!paused;get('pause').textContent=paused?'Resume':'Pause';
+ if(!paused){previous=null;frame=requestAnimationFrame(step);}else cancelAnimationFrame(frame);
+};
+function zoom(f){
+ if(playing)return;
+ const span=Math.min(last,Math.max(12,Math.round((hi-lo)*f)));
+ lo=Math.max(0,Math.min(last-span,Math.round(active-span/2)));hi=lo+span;draw();
+}
+get('in').onclick=()=>zoom(.6);get('out').onclick=()=>zoom(1/.6);
+get('reset').onclick=()=>{lo=0;hi=last;if(playing)finish();else draw();};
+toggles.forEach(el=>el.onchange=()=>{if(playing)finish('Explore the chart');else draw();});
+svg.addEventListener('pointermove',e=>{
+ if(playing)return;
+ const r=svg.getBoundingClientRect(),pos=(e.clientX-r.left)*plot.w/r.width;
+ active=Math.max(lo,Math.min(hi,Math.round(lo+(pos-plot.left)*(hi-lo)/(plot.right-plot.left))));draw();
+});
+svg.addEventListener('keydown',e=>{
+ if(playing||!['ArrowLeft','ArrowRight'].includes(e.key))return;
+ e.preventDefault();active=Math.max(lo,Math.min(hi,active+(e.key==='ArrowLeft'?-1:1)));draw();
+});
+new ResizeObserver(draw).observe(get('wrap'));draw();
+</script>
+</html>
